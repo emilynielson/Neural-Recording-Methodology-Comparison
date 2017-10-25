@@ -1,13 +1,21 @@
 function plot_cell(){
   var dataset = $('#simDatasetID').dropdown('get value');
   var cell = $('#simCell').dropdown('get value');
+  $('#simChart').replaceWith('<div id="simChart"><div class="bk-root"><div class="bk-plotdiv" id="mainPlot"></div></div></div>')
   if (cell === ''){
     alert("Please select a cell!");
   }
   else{
-    var url = '/results/simData/' + dataset + '/' + cell + '.html' ;
-    $('#simChart').html('<iframe src="' + url + '" width="1200" height="430" frameborder="0"></iframe>');
-  }
+    var url = '/results/simData/' + dataset + '/' + cell + '.json' ;
+      $.getJSON(url, function(data){  
+        Bokeh.safely(function() {
+          var docs_json = data[1];
+          var render_items = data[0];
+          Bokeh.embed.embed_items(docs_json, render_items);
+        });
+
+      });
+  };
 };
 
 

@@ -12,6 +12,10 @@
     flex: 1;
 }
 
+
+.field {
+    z-index: 500;
+}
 a{
     color: gray;
 }
