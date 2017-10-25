@@ -6,7 +6,7 @@ function plot_cell(){
     alert("Please select a cell!");
   }
   else{
-    var url = '/results/simData/' + dataset + '/' + cell + '.json' ;
+    var url = '/results/simdata/' + dataset + '/' + cell + '.json' ;
       $.getJSON(url, function(data){  
         Bokeh.safely(function() {
           var docs_json = data[1];
