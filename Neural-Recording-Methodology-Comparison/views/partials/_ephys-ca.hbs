@@ -1,0 +1,191 @@
+
+<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.10.min.css" type="text/css" />
+
+<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.10.min.js"></script>
+<div class="ui container">
+  <div class="ui text">
+    <p>
+      By simultaneously recorded data, we refer to a recording that provides
+      both a direct measurement of the spiking activity of a neuron and that of the
+      indirect method of interest. In our case simultaneous spiking and Ca imaging,
+      as can be achieved for instance by combining loose-cell recordings and imaging.
+    </p>
+    <p>
+      Such datasets are far too rare in neuroscience. This resource collects many of them
+      (<a href="data">Datasets</a>)
+      and we will gladly incorporate any submitted simultaneous dataset.
+    </p>
+    <p>
+      The first thing one can do with such a dataset is to develop a spike-to-calcium model
+      that tests our understanding of the way calcium imaging is related to spiking activity
+      by generating a predicted synthetic calcium trace given a set of spike times.
+    </p>
+    <p>
+      Details of each model are described in the <a href="model">Models</a> section of this resource. Below we display quantifications and visualizations
+      of the performance of models on the different simultaneously recorded datasets.
+    </p>
+    <h1>Model fits</h1>
+    <div id="alert"></div>
+    <div class="ui form">
+      <div class="two fields">
+        <div class="field">
+          <label>Datasets</label>
+          <div class="ui fluid search selection dropdown" id='simDatasetID'>
+            <div class="default text"> Select a dataset</div>
+            <div class="menu">
+              {{#each simFormList}}
+              <div class="item" data-value={{alias}}>{{name}}</div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Recording</label>
+          <div class="ui fluid search selection dropdown" id='simCell'>
+            <div class="default text"> Select a cell in a session</div>
+            <div class="menu" id='simDataID'>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="ui right floated blue button" onclick="plot_cell()">Plot</button>
+    <br>
+    <br>
+    <div id='simChart'>
+      <div class="bk-root">
+        <div class="bk-plotdiv" id="mainPlot"></div>
+      </div>
+    </div><br><br>
+    <h1>Performances</h1>
+    <div class="ui divider"></div>
+    <div class="ui two column grid">
+      <div class="column">
+        <h4>All datasets</h4>
+        <div class="ui label" style="background-color:#ffffff">
+          .0
+        </div>
+        <div class="ui label" style="background-color:#fff5eb">
+          .1
+        </div>
+        <div class="ui label" style="background-color:#fee6ce">
+          .2
+        </div>
+        <div class="ui label" style="background-color:#fdd0a2">
+          .3
+        </div>
+        <div class="ui label" style="background-color:#fdae6b">
+          .4
+        </div>
+        <div class="ui label" style="background-color:#fd8d3c">
+          .5
+        </div>
+        <div class="ui label" style="background-color:#f16913">
+          .6
+        </div>
+        <div class="ui label" style="background-color:#d94801">
+          .7
+        </div>
+        <div class="ui label" style="background-color:#a63603">
+          .8
+        </div>
+        <div class="ui label" style="background-color:#7f2704">
+          .9
+        </div>
+      </div>
+      <div class="column">
+        <h4>Single datasets (click label in table to see dataset name)</h4>
+        <div class="ui label" style="background-color:#ffffff">
+          .0
+        </div>
+        <div class="ui label" style="background-color:#f7fcf5">
+          .1
+        </div>
+        <div class="ui label" style="background-color:#e5f5e0">
+          .2
+        </div>
+        <div class="ui label" style="background-color:#c7e9c0">
+          .3
+        </div>
+        <div class="ui label" style="background-color:#a1d99b">
+          .4
+        </div>
+        <div class="ui label" style="background-color:#74c476">
+          .5
+        </div>
+        <div class="ui label" style="background-color:#41ab5d">
+          .6
+        </div>
+        <div class="ui label" style="background-color:#238b45">
+          .7
+        </div>
+        <div class="ui label" style="background-color:#006d2c">
+          .8
+        </div>
+        <div class="ui label" style="background-color:#00441b">
+          .9
+        </div>
+      </div>
+    </div>
+
+    <table class="ui celled striped three column table" id='simPerformanceTab'>
+        <thead>
+          <tr>
+              <th>Model</th>
+              <th>Explained variance</th>
+              <th>Spearman's correlation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each simPerformance}}
+        <tr>
+          <td>
+            {{name}} <br>
+            <div class="ui black label">
+              {{alias}}
+            </div>
+          </td>
+          <td>
+            <div class="ui label" style="background-color:{{pcolor}}" data-content="All datasets">
+              {{performance}}
+            </div>
+            {{#each other}}
+              <div class="ui label" style="background-color:{{pcolor}}" data-content="{{name}}">
+                {{performance}}
+              </div>
+            {{/each}}
+          </td>
+          <td>
+            <div class="ui label" style="background-color:{{rcolor}}" data-content="All datasets">
+              {{rank}}
+            </div>
+            {{#each other}}
+              <div class="ui label" style="background-color:{{rcolor}}"  data-content="{{name}}">
+                {{rank}}
+              </div>
+            {{/each}}
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+    <br><br>
+  </div>
+</div>
+{{> _contribute_code}}
+<br><br><br>
+
+<script src="/javascripts/simCell.js"></script>
+<script type="text/javascript">
+$(document)
+  .ready(function() {
+    $('#simPerformanceTab .label').popup({
+      // inline: true,
+      // hoverable: true,
+      position: 'top center',
+      boundary: $('#simPerformanceTab'),
+      // lastResort: true,
+      on: 'click'});
+  });
+</script>
