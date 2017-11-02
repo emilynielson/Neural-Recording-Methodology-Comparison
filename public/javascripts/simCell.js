@@ -1,4 +1,8 @@
 function plot_cell(){
+  //this.attr('disabled', 'disabled');
+  var button = $('#button');
+  button.attr('disabled', 'disabled');
+
   var dataset = $('#simDatasetID').dropdown('get value');
   var cell = $('#simCell').dropdown('get value');
   
@@ -31,7 +35,7 @@ function plot_cell(){
       // complete
       if (percent >= 100) {
         clearInterval(timerId);
-        $('#load').removeClass('progress-bar-striped active');
+        
 
       // do more ...
 
@@ -44,7 +48,8 @@ function plot_cell(){
           var docs_json = data[1];
           var render_items = data[0];
           Bokeh.embed.embed_items(docs_json, render_items);
-          //$('#load').empty();
+          button.removeAttr('disabled', 'disabled');
+          percent = 100
         });
 
       });
